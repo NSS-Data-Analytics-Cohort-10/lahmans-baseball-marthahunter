@@ -94,7 +94,25 @@ ORDER BY putouts DESC;
 
 -- 5. Find the average number of strikeouts per game by decade since 1920. Round the numbers you report to 2 decimal places. Do the same for home runs per game. Do you see any trends?
 
+--divide by the home games games table?
 
+SELECT COUNT (g)
+FROM batting
+102816
+
+SELECT COUNT (games)
+FROM homegames;
+-- 3006
+
+SELECT 
+SUM(so) AS strikeouts, 
+yearid
+FROM batting
+GROUP BY yearid
+ORDER BY yearid DESC;
+
+-- pitching has one million games
+-- batting has more
 
 -- 6. Find the player who had the most success stealing bases in 2016, where success is measured as the percentage of stolen base attempts which are successful. (A stolen base attempt results either in a stolen base or being caught stealing.) Consider only players who attempted at least 20 stolen bases.
 
