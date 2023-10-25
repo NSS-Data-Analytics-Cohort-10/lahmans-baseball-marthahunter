@@ -111,6 +111,7 @@ FROM batting
 GROUP BY yearid
 ORDER BY yearid DESC;
 
+-- strikeouts divided by total game
 -- pitching has one million games
 -- batting has more
 
