@@ -4,7 +4,50 @@
 
 -- 1. What range of years for baseball games played does the provided database cover?
 
+-- This database contains pitching, hitting, and fielding statistics for Major League Baseball from 1871 through 2016.
+
+SELECT DISTINCT yearid 
+FROM teams;
+
+SELECT MIN(yearid), MAX(yearid)
+FROM teams;
+
+-- A1: "This database contains pitching, hitting, and fielding statistics for Major League Baseball from 1871 through 2016." - data dictionary
+-- Confirmed through queries above
+
 -- 2. Find the name and height of the shortest player in the database. How many games did he play in? What is the name of the team for which he played?
+
+SELECT namefirst, namelast, height
+FROM people
+ORDER BY height
+LIMIT 1;
+
+SELECT namefirst, namelast, height
+FROM people
+ORDER BY height
+LIMIT 1;
+
+SELECT *
+FROM people
+ORDER BY height
+LIMIT 1;
+
+SELECT * FROM teams
+
+SELECT 
+namefirst, 
+namelast, 
+height,
+teams.name
+FROM people
+INNER JOIN batting
+USING (playerid)
+INNER JOIN teams
+ON batting.teamid = teams.teamid
+ORDER BY height
+LIMIT 1;
+
+-- Eddie Gaelel, 43 inches, St. Louis Browns
 
 -- 3. Find all players in the database who played at Vanderbilt University. Create a list showing each player’s first and last names as well as the total salary they earned in the major leagues. Sort this list in descending order by the total salary earned. Which Vanderbilt player earned the most money in the majors?
 
