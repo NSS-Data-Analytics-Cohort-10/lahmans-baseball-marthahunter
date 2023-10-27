@@ -95,21 +95,12 @@ ORDER BY putouts DESC;
 -- 5. Find the average number of strikeouts per game by decade since 1920. Round the numbers you report to 2 decimal places. Do the same for home runs per game. Do you see any trends?
 
 --divide by the home games games table?
-
-SELECT COUNT (g)
-FROM batting
-102816
-
-SELECT COUNT (games)
-FROM homegames;
--- 3006
-
 SELECT 
-SUM(so) AS strikeouts, 
-yearid
-FROM batting
-GROUP BY yearid
-ORDER BY yearid DESC;
+	yearid, 
+	so, 
+	g,
+	(SELECT so/g) AS avg_so
+FROM teams;
 
 -- strikeouts divided by total game
 -- pitching has one million games
