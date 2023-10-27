@@ -102,6 +102,22 @@ SELECT
 	(SELECT so/g) AS avg_so
 FROM teams;
 
+SELECT
+	yearid/10*10 AS decade,
+	((SUM(so))/(yearid/10*10)) AS avg_so
+FROM teams
+WHERE (yearid/10*10) > 1910
+GROUP BY decade
+ORDER BY decade DESC;
+
+SELECT
+	yearid/10*10 AS decade,
+	(so/g) AS avg_so
+FROM teams
+WHERE (yearid/10*10) > 1910
+GROUP BY decade, avg_so
+ORDER BY decade DESC;
+
 -- strikeouts divided by total game
 -- pitching has one million games
 -- batting has more
