@@ -6,10 +6,13 @@
 
 -- This database contains pitching, hitting, and fielding statistics for Major League Baseball from 1871 through 2016.
 
-SELECT DISTINCT yearid 
+SELECT 
+	DISTINCT yearid 
 FROM teams;
 
-SELECT MIN(yearid), MAX(yearid)
+SELECT 
+	MIN(yearid), 
+	MAX(yearid)
 FROM teams;
 
 -- A1: "This database contains pitching, hitting, and fielding statistics for Major League Baseball from 1871 through 2016." - data dictionary
@@ -17,12 +20,18 @@ FROM teams;
 
 -- 2. Find the name and height of the shortest player in the database. How many games did he play in? What is the name of the team for which he played?
 
-SELECT namefirst, namelast, height
+SELECT 
+	namefirst, 
+	namelast, 
+	height
 FROM people
 ORDER BY height
 LIMIT 1;
 
-SELECT namefirst, namelast, height
+SELECT 
+	namefirst, 
+	namelast, 
+	height
 FROM people
 ORDER BY height
 LIMIT 1;
@@ -35,15 +44,15 @@ LIMIT 1;
 SELECT * FROM teams
 
 SELECT 
-namefirst, 
-namelast, 
-height,
-teams.name
+	namefirst, 
+	namelast, 
+	height,
+	teams.name
 FROM people
-INNER JOIN batting
-USING (playerid)
-INNER JOIN teams
-ON batting.teamid = teams.teamid
+	INNER JOIN batting
+	USING (playerid)
+	INNER JOIN teams
+	ON batting.teamid = teams.teamid
 ORDER BY height
 LIMIT 1;
 
@@ -52,22 +61,22 @@ LIMIT 1;
 -- 3. Find all players in the database who played at Vanderbilt University. Create a list showing each player’s first and last names as well as the total salary they earned in the major leagues. Sort this list in descending order by the total salary earned. Which Vanderbilt player earned the most money in the majors?
 
 SELECT 
-playerid,
-schoolname, 
-namefirst,
-namelast,
-SUM(salary) AS salary_sum
+	playerid,
+	schoolname, 
+	namefirst,
+	namelast,
+	SUM(salary) AS salary_sum
 FROM schools
-LEFT JOIN collegeplaying
-USING (schoolid)
-LEFT JOIN people
-USING (playerid)
-LEFT JOIN salaries
-USING (playerid)
-LEFT JOIN managers
-USING (playerid)
+	LEFT JOIN collegeplaying
+	USING (schoolid)
+	LEFT JOIN people
+	USING (playerid)
+	LEFT JOIN salaries
+	USING (playerid)
+	LEFT JOIN managers
+	USING (playerid)
 WHERE schoolname LIKE '%Vanderbilt University%'
-And salary IS NOT NULL
+	And salary IS NOT NULL
 GROUP BY playerid, schoolname, namefirst, namelast
 ORDER BY salary_sum DESC
 
@@ -79,11 +88,11 @@ SELECT *
 FROM fielding
 
 SELECT  
-SUM(po) AS putouts,
-CASE WHEN pos = 'SS' OR pos = '1B' OR pos = '2B' OR pos = '3B' THEN 'Infield'
-WHEN pos = 'OF' THEN 'Outfield'
-WHEN pos = 'P' OR pos = 'C' THEN 'Battery'
-END pos_type
+	SUM(po) AS putouts,
+	CASE WHEN pos = 'SS' OR pos = '1B' OR pos = '2B' OR pos = '3B' THEN 'Infield'
+		WHEN pos = 'OF' THEN 'Outfield'
+		WHEN pos = 'P' OR pos = 'C' THEN 'Battery'
+		END pos_type
 FROM fielding
 WHERE yearid = '2016'
 GROUP BY pos_type
@@ -152,28 +161,30 @@ ORDER BY percent_stolen DESC
 -- 7. From 1970 – 2016, what is the largest number of wins for a team that did not win the world series? What is the smallest number of wins for a team that did win the world series? Doing this will probably result in an unusually small number of wins for a world series champion – determine why this is the case. Then redo your query, excluding the problem year. How often from 1970 – 2016 was it the case that a team with the most wins also won the world series? What percentage of the time?
 
 SELECT
-yearid,
-name,
-SUM(w) AS wins
+	yearid,
+	name,
+	SUM(w) AS wins
 FROM teams
 WHERE wswin = 'N'
-AND yearid BETWEEN 1970 AND 2016
+	AND yearid BETWEEN 1970 AND 2016
 GROUP BY name, yearid
 ORDER BY SUM(w) DESC;
 -- 2001 Seattle Mariners: 116 wins
 
 SELECT
-yearid,
-name,
-SUM(w) AS wins
+	yearid,
+	name,
+	SUM(w) AS wins
 FROM teams
 WHERE wswin = 'Y'
-AND yearid BETWEEN 1970 AND 2016
+	AND yearid BETWEEN 1970 AND 2016
 GROUP BY name, yearid
 ORDER BY SUM(w);
 -- 1981 is the outlier with only 63 wins by the LA Dodgers
 -- digging into 1981 below
-SELECT SUM(g) AS total_games, yearid AS year
+SELECT 
+	SUM(g) AS total_games, 
+	yearid AS year
 FROM teams
 WHERE yearid BETWEEN 1970 AND 2016
 GROUP BY yearid
@@ -181,16 +192,30 @@ ORDER BY SUM(g)
 -- We see there are far fewer games from 1981. A quick Google search reveals: "At 12:30 A.M on June 12th, union chief Marvin Miller announced the player's strike beginning the longest labor action to date in American sports history. By the time the season finally resumed on August 10th, seven-hundred six games (38 percent of the Major League schedule) had been canceled." (Source: Baseball Almanac)
 
 SELECT
-yearid,
-name,
-SUM(w) AS wins
+	yearid,
+	name,
+	SUM(w) AS wins
 FROM teams
 WHERE wswin = 'Y'
-AND yearid BETWEEN 1970 AND 2016
-AND yearid != 1981
+	AND yearid BETWEEN 1970 AND 2016
+	AND yearid != 1981
 GROUP BY name, yearid
 ORDER BY SUM(w);
 -- Now we get 2006 St. Louis Cardinals: 83
+
+-- Final part: How often from 1970 – 2016 was it the case that a team with the most wins also won the world series? What percentage of the time?
+-- SUM(CASE WHEN wswin= 'Y' THEN 1 ELSE 0 END)
+
+SELECT
+	yearid,
+	name,
+	SUM(w) AS wins
+FROM teams
+WHERE wswin = 'Y'
+	AND yearid BETWEEN 1970 AND 2016
+	AND yearid != 1981
+GROUP BY name, yearid
+ORDER BY SUM(w);
 
 -- 8. Using the attendance figures from the homegames table, find the teams and parks which had the top 5 average attendance per game in 2016 (where average attendance is defined as total attendance divided by number of games). Only consider parks where there were at least 10 games played. Report the park name, team name, and average attendance. Repeat for the lowest 5 average attendance.
 
