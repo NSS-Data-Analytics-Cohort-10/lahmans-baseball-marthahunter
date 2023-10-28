@@ -149,8 +149,36 @@ ORDER BY percent_stolen DESC
 
 -- Chris Owings: 91.30% stolen
 
-
 -- 7. From 1970 – 2016, what is the largest number of wins for a team that did not win the world series? What is the smallest number of wins for a team that did win the world series? Doing this will probably result in an unusually small number of wins for a world series champion – determine why this is the case. Then redo your query, excluding the problem year. How often from 1970 – 2016 was it the case that a team with the most wins also won the world series? What percentage of the time?
+
+SELECT
+yearid,
+name,
+SUM(w) AS wins
+FROM teams
+WHERE wswin = 'N'
+AND yearid BETWEEN 1970 AND 2016
+GROUP BY name, yearid
+ORDER BY SUM(w) DESC;
+-- 2001 Seattle Mariners: 116 wins
+
+SELECT
+yearid,
+name,
+SUM(w) AS wins
+FROM teams
+WHERE wswin = 'Y'
+AND yearid BETWEEN 1970 AND 2016
+GROUP BY name, yearid
+ORDER BY SUM(w);
+-- 1981 is the outlier with only 63 wins by the LA Dodgers
+-- digging into 1981 below
+SELECT SUM(g) AS total_games, yearid AS year
+FROM teams
+WHERE yearid BETWEEN 1970 AND 2016
+GROUP BY yearid
+ORDER BY SUM(g)
+-- We see there are far fewer games from 1981. A quick Google search reveals: "At 12:30 A.M on June 12th, union chief Marvin Miller announced the player's strike beginning the longest labor action to date in American sports history. By the time the season finally resumed on August 10th, seven-hundred six games (38 percent of the Major League schedule) had been canceled." (Source: Baseball Almanac)
 
 -- 8. Using the attendance figures from the homegames table, find the teams and parks which had the top 5 average attendance per game in 2016 (where average attendance is defined as total attendance divided by number of games). Only consider parks where there were at least 10 games played. Report the park name, team name, and average attendance. Repeat for the lowest 5 average attendance.
 
