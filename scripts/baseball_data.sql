@@ -85,6 +85,7 @@ WHEN pos = 'OF' THEN 'Outfield'
 WHEN pos = 'P' OR pos = 'C' THEN 'Battery'
 END pos_type
 FROM fielding
+WHERE yearid = '2016'
 GROUP BY pos_type
 ORDER BY putouts DESC;
 
@@ -112,6 +113,30 @@ SELECT
 	yearid/10*10 AS decade,
 	(SUM(so))/(SUM(g)) AS avg_so
 FROM teams
+WHERE yearid/10*10 > 1910
+GROUP BY decade 
+ORDER BY decade DESC;
+
+SELECT
+	yearid/10*10 AS decade,
+	(ROUND(SUM(so))/(SUM(g))) AS avg_so
+FROM teams
+WHERE yearid/10*10 > 1910
+GROUP BY decade 
+ORDER BY decade DESC;
+
+SELECT
+	yearid/10*10 AS decade,
+	ROUND(AVG(so/g),2) AS avg_so
+FROM pitching
+WHERE yearid/10*10 > 1910
+GROUP BY decade 
+ORDER BY decade DESC;
+
+SELECT
+	yearid/10*10 AS decade,
+	ROUND(AVG(so/g),2) AS avg_so
+FROM batting
 WHERE yearid/10*10 > 1910
 GROUP BY decade 
 ORDER BY decade DESC;
