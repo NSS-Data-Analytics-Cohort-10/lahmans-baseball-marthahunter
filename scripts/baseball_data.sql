@@ -106,46 +106,20 @@ FROM teams;
 --roll up rows into decade
 --group by presents an issue
 
+--THINGS TO CONSIDER
 --1. what are the data types of so and g/how might that affect numbers
 	--they're integers
 --2. what is the teams table doing? for every team for every year, how many games did they play? step missing
+
+
 SELECT
-	yearid/10*10 AS decade,
-	(SUM(so))/(SUM(g)) AS avg_so
+	FLOOR((yearid/10)*10) AS decade, --FLOOR came from a classmate; I'm not sure it changes anything
+	ROUND(AVG(so/g), 2) AS avg_so,
+	ROUND(AVG(hr/g), 2) AS avg_hr
 FROM teams
-WHERE yearid/10*10 > 1910
+WHERE yearid > 1910
 GROUP BY decade 
-ORDER BY decade DESC;
-
-SELECT
-	yearid/10*10 AS decade,
-	(ROUND(SUM(so))/(SUM(g))) AS avg_so
-FROM teams
-WHERE yearid/10*10 > 1910
-GROUP BY decade 
-ORDER BY decade DESC;
-
-SELECT
-	yearid/10*10 AS decade,
-	ROUND(AVG(so/g),2) AS avg_so
-FROM pitching
-WHERE yearid/10*10 > 1910
-GROUP BY decade 
-ORDER BY decade DESC;
-
-SELECT
-	yearid/10*10 AS decade,
-	ROUND(AVG(so/g),2) AS avg_so
-FROM batting
-WHERE yearid/10*10 > 1910
-GROUP BY decade 
-ORDER BY decade DESC;
-
-SELECT *
-FROM teams	 
-
--- strikeouts divided by total game
-
+ORDER BY decade;
 
 -- 6. Find the player who had the most success stealing bases in 2016, where success is measured as the percentage of stolen base attempts which are successful. (A stolen base attempt results either in a stolen base or being caught stealing.) Consider only players who attempted at least 20 stolen bases.
 
