@@ -123,18 +123,31 @@ ORDER BY decade;
 
 -- 6. Find the player who had the most success stealing bases in 2016, where success is measured as the percentage of stolen base attempts which are successful. (A stolen base attempt results either in a stolen base or being caught stealing.) Consider only players who attempted at least 20 stolen bases.
 
-SELECT 
+WITH stolen_bases AS (
+	SELECT 
 	playerID,
 	SUM(sb::numeric) AS stolen_bases,
 	SUM(cs::numeric) AS caught_stealing,
-	((SUM(sb::numeric))/(SUM(cs::numeric))*100) AS percent_success
+	(((SUM(sb))/((SUM(sb::numeric))+(SUM(cs::numeric))))*100) AS percent_stolen
 FROM batting
 WHERE sb IS NOT NULL
-AND sb != 0
 AND cs IS NOT NULL
-AND cs != 0
+AND yearid = 2016
 GROUP BY playerID
-HAVING (SUM(sb) + SUM(cs)) > 19;
+HAVING (SUM(sb) + SUM(cs)) > 19
+)
+SELECT 
+	namefirst,
+	namelast,
+	stolen_bases,
+	caught_stealing,
+	percent_stolen
+FROM people AS p
+INNER JOIN stolen_bases AS s
+USING (playerid)
+ORDER BY percent_stolen DESC
+
+-- Chris Owings: 91.30% stolen
 
 
 -- 7. From 1970 – 2016, what is the largest number of wins for a team that did not win the world series? What is the smallest number of wins for a team that did win the world series? Doing this will probably result in an unusually small number of wins for a world series champion – determine why this is the case. Then redo your query, excluding the problem year. How often from 1970 – 2016 was it the case that a team with the most wins also won the world series? What percentage of the time?
