@@ -102,25 +102,25 @@ SELECT
 	(SELECT so/g) AS avg_so
 FROM teams;
 
+--roll up rows into decade
+--group by presents an issue
+
+--1. what are the data types of so and g/how might that affect numbers
+	--they're integers
+--2. what is the teams table doing? for every team for every year, how many games did they play? step missing
 SELECT
 	yearid/10*10 AS decade,
-	((SUM(so))/(yearid/10*10)) AS avg_so
+	(SUM(so))/(SUM(g)) AS avg_so
 FROM teams
-WHERE (yearid/10*10) > 1910
-GROUP BY decade
+WHERE yearid/10*10 > 1910
+GROUP BY decade 
 ORDER BY decade DESC;
 
-SELECT
-	yearid/10*10 AS decade,
-	(so/g) AS avg_so
-FROM teams
-WHERE (yearid/10*10) > 1910
-GROUP BY decade, avg_so
-ORDER BY decade DESC;
+SELECT *
+FROM teams	 
 
 -- strikeouts divided by total game
--- pitching has one million games
--- batting has more
+
 
 -- 6. Find the player who had the most success stealing bases in 2016, where success is measured as the percentage of stolen base attempts which are successful. (A stolen base attempt results either in a stolen base or being caught stealing.) Consider only players who attempted at least 20 stolen bases.
 
