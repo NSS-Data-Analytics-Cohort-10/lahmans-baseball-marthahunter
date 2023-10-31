@@ -98,9 +98,9 @@ WHERE yearid = '2016'
 GROUP BY pos_type
 ORDER BY putouts DESC;
 
--- Infield: 6,101,378
--- Outfield: 2,731,506
--- Battery: 2,575,499
+-- Infield: 58934
+-- Outfield: 29560
+-- Battery: 41424
 
 -- 5. Find the average number of strikeouts per game by decade since 1920. Round the numbers you report to 2 decimal places. Do the same for home runs per game. Do you see any trends?
 
@@ -126,7 +126,7 @@ SELECT
 	ROUND(AVG(so/g), 2) AS avg_so,
 	ROUND(AVG(hr/g), 2) AS avg_hr
 FROM teams
-WHERE yearid > 1910
+WHERE yearid >= 1920
 GROUP BY decade 
 ORDER BY decade;
 
@@ -217,7 +217,33 @@ WHERE wswin = 'Y'
 GROUP BY name, yearid
 ORDER BY SUM(w);
 
+--- NOTE: this code came from classmates. I'd like to go back later to try to recreate the solution ---
+WITH series_losers AS (SELECT yearid, MAX(w) AS maxwins_series_losers	
+					FROM teams
+						WHERE yearid BETWEEN 1970 AND 2016
+								AND wswin='N'
+					   			AND yearid <> 1981
+					GROUP BY yearid
+					ORDER BY yearid DESC),
+series_winners AS (SELECT yearid, MIN(w) AS minwins_series_winners
+					FROM teams
+						WHERE yearid BETWEEN 1970 AND 2016
+								AND wswin='Y'
+				   				AND yearid <> 1981
+					GROUP BY yearid
+					ORDER BY yearid DESC)				
+SELECT
+	ROUND(SUM(CASE WHEN sl.maxwins_series_losers < sw.minwins_series_winners 							THEN 1.00 ELSE 0 END)/COUNT(sw.minwins_series_winners)*100,2) AS percent_of_greater_wins_of_series_winners,
+	ROUND(SUM(CASE WHEN sl.maxwins_series_losers > sw.minwins_series_winners 							THEN 1.00 ELSE 0 END)/COUNT(sl.maxwins_series_losers)*100,2) AS percent_of_greater_wins_of_series_losers,
+	ROUND(SUM(CASE WHEN sl.maxwins_series_losers = sw.minwins_series_winners 							THEN 1.00 ELSE 0 END)/COUNT(sw.minwins_series_winners)*100,2) AS percent_of_tie_between_losers_winners
+FROM series_losers as sl
+JOIN series_winners as sw
+USING (yearid)
+
 -- 8. Using the attendance figures from the homegames table, find the teams and parks which had the top 5 average attendance per game in 2016 (where average attendance is defined as total attendance divided by number of games). Only consider parks where there were at least 10 games played. Report the park name, team name, and average attendance. Repeat for the lowest 5 average attendance.
+
+SELECT *
+FROM homegames
 
 -- 9. Which managers have won the TSN Manager of the Year award in both the National League (NL) and the American League (AL)? Give their full name and the teams that they were managing when they won the award.
 
