@@ -278,6 +278,24 @@ LIMIT 5;
 SELECT *
 FROM awardsmanagers
 
+-- this is the answer I get when I'm just pulling information from awardsmanagers via two CTEs. I believe this is correct.
+WITH NL_wins AS (
+	SELECT yearid, playerid AS NL_winners
+	FROM awardsmanagers
+	WHERE awardid = 'TSN Manager of the Year'
+		AND lgid = 'NL'),
+AL_wins AS (
+	SELECT yearid, playerid AS AL_winners
+	FROM awardsmanagers
+	WHERE awardid = 'TSN Manager of the Year'
+		AND lgid = 'AL')
+SELECT DISTINCT 
+	NL_winners AS winner_id
+FROM NL_wins
+INNER JOIN AL_wins -- using an inner joins seems to effectively filter down to the two people who won both
+ON nl_winners = al_winners
+
+-- however, now I have a query that pulls in additional tables (possibly too many tables!)
 WITH NL_wins AS (
 	SELECT yearid, playerid AS NL_winners
 	FROM awardsmanagers
@@ -295,12 +313,14 @@ SELECT DISTINCT
 FROM NL_wins
 INNER JOIN AL_wins
 ON nl_winners = al_winners
-INNER JOIN managers
-ON NL_wins.yearid = managers.yearid
-INNER JOIN salaries
-ON managers.yearid = salaries.yearid
+FROM --- figure this out when more brain power is available
 INNER JOIN people
-ON salaries.playerid = people.playerid
+ON awardsmanagers.playerid = people.playerid
+--INNER JOIN managers
+--ON NL_wins.yearid = managers.yearid
+--INNER JOIN salaries
+--ON managers.yearid = salaries.yearid
+
 
 -- 10. Find all players who hit their career highest number of home runs in 2016. Consider only players who have played in the league for at least 10 years, and who hit at least one home run in 2016. Report the players' first and last names and the number of home runs they hit in 2016.
 
