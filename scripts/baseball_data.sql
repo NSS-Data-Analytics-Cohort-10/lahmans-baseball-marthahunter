@@ -313,7 +313,6 @@ SELECT DISTINCT
 FROM NL_wins
 INNER JOIN AL_wins
 ON nl_winners = al_winners
-FROM --- figure this out when more brain power is available
 INNER JOIN people
 ON awardsmanagers.playerid = people.playerid
 --INNER JOIN managers
@@ -321,8 +320,39 @@ ON awardsmanagers.playerid = people.playerid
 --INNER JOIN salaries
 --ON managers.yearid = salaries.yearid
 
+SELECT am1.playerid AS al_id, am1.yearid AS al_year, am1.lgid AS al_league, am1.awardid AS al_award, am2.playerid AS nl_id,  am2.yearid AS nl_year, am2.lgid AS nl_league, am2.awardid AS nl_award
+FROM awardsmanagers AS am1
+JOIN awardsmanagers AS am2
+USING (playerid)
+WHERE am1.awardid = 'TSN Manager of the Year'
+AND am2.awardid = 'TSN Manager of the Year'
+AND am1.lgid = 'AL' 
+AND am2.lgid = 'NL'
+
+
 
 -- 10. Find all players who hit their career highest number of home runs in 2016. Consider only players who have played in the league for at least 10 years, and who hit at least one home run in 2016. Report the players' first and last names and the number of home runs they hit in 2016.
+
+SELECT *
+FROM batting
+
+SELECT 
+	SUM(hr) AS home_runs, 
+	playerid
+FROM batting
+WHERE yearid = 2016
+GROUP BY playerid
+ORDER BY home_runs DESC
+
+SELECT 
+	SUM(hr) AS home_runs, 
+	playerid
+FROM batting
+LEFT JOIN people
+USING (playerid)
+WHERE yearid = 2016
+GROUP BY playerid
+ORDER BY home_runs DESC
 
 -- Open-ended questions
 
