@@ -320,15 +320,34 @@ ON awardsmanagers.playerid = people.playerid
 --INNER JOIN salaries
 --ON managers.yearid = salaries.yearid
 
-SELECT am1.playerid AS al_id, am1.yearid AS al_year, am1.lgid AS al_league, am1.awardid AS al_award, am2.playerid AS nl_id,  am2.yearid AS nl_year, am2.lgid AS nl_league, am2.awardid AS nl_award
+
+SELECT p.namefirst, p.namelast, am1.playerid AS am1_id, am1.yearid AS am1_year, am1.lgid AS am1_league, am1.awardid AS am1_award, am2.playerid AS am2_id,  am2.yearid AS am2_year, am2.lgid AS am2_league, am2.awardid AS am2_award
 FROM awardsmanagers AS am1
 JOIN awardsmanagers AS am2
 USING (playerid)
+INNER JOIN people AS p
+USING (playerid)
+INNER JOIN managers AS m
+USING (playerid)
 WHERE am1.awardid = 'TSN Manager of the Year'
 AND am2.awardid = 'TSN Manager of the Year'
-AND am1.lgid = 'AL' 
-AND am2.lgid = 'NL'
+AND ((am1.lgid = 'AL' AND am2.lgid = 'NL')
+OR (am1.lgid = 'NL' AND am2.lgid = 'AL'))
+AND (m.yearid = am1.yearid)
 
+SELECT p.namefirst, p.namelast, m.teamid AS team, am1.yearid AS am1_year, am1.lgid AS am1_league, am1.awardid AS am1_award, am2.yearid AS am2_year, am2.lgid AS am2_league, am2.awardid AS am2_award
+FROM awardsmanagers AS am1
+JOIN awardsmanagers AS am2
+USING (playerid)
+INNER JOIN people AS p
+USING (playerid)
+INNER JOIN managers AS m
+USING (playerid)
+WHERE am1.awardid = 'TSN Manager of the Year'
+AND am2.awardid = 'TSN Manager of the Year'
+AND ((am1.lgid = 'AL' AND am2.lgid = 'NL')
+OR (am1.lgid = 'NL' AND am2.lgid = 'AL'))
+AND (m.yearid = am1.yearid)
 
 
 -- 10. Find all players who hit their career highest number of home runs in 2016. Consider only players who have played in the league for at least 10 years, and who hit at least one home run in 2016. Report the players' first and last names and the number of home runs they hit in 2016.
