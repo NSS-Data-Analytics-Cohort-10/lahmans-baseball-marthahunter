@@ -316,15 +316,8 @@ AND (m.yearid = am1.yearid)
 SELECT *
 FROM batting
 
-SELECT 
-	SUM(hr) AS home_runs, 
-	playerid
-FROM batting
-WHERE yearid = 2016
-GROUP BY playerid
-ORDER BY home_runs DESC
-
-SELECT 
+WITH 2016_hrs AS( -- hrs in 2016 CTE
+(SELECT 
 	SUM(hr) AS home_runs, 
 	playerid
 FROM batting
@@ -332,7 +325,19 @@ LEFT JOIN people
 USING (playerid)
 WHERE yearid = 2016
 GROUP BY playerid
-ORDER BY home_runs DESC
+HAVING SUM(hr) > 0),
+
+ten_years AS ( -- players in league for 10+years CTE (is there a better way to get this info?)
+SELECT playerid
+FROM people
+WHERE )
+
+--well this is not working because of the calculation, but I'm thinking something like this:
+SELECT playerid, (debut::date), (finalgame:: date)
+FROM people
+WHERE (finalgame - debut) = 10
+
+-- still need a max hrs cte and a main query to stitch it together ... am I forgetting something
 
 -- Open-ended questions
 
