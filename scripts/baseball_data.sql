@@ -217,7 +217,7 @@ WHERE wswin = 'Y'
 GROUP BY name, yearid
 ORDER BY SUM(w);
 
---- NOTE: this code came from classmates. I'd like to go back later to try to recreate the solution ---
+--- PLEASE NOTE: this code (for the final part of 7) came from classmates and is not the result of my own labor. I'd like to go back later to try to recreate the solution ---
 WITH series_losers AS (SELECT yearid, MAX(w) AS maxwins_series_losers	
 					FROM teams
 						WHERE yearid BETWEEN 1970 AND 2016
@@ -295,46 +295,7 @@ FROM NL_wins
 INNER JOIN AL_wins -- using an inner joins seems to effectively filter down to the two people who won both
 ON nl_winners = al_winners
 
--- however, now I have a query that pulls in additional tables (possibly too many tables!)
-WITH NL_wins AS (
-	SELECT yearid, playerid AS NL_winners
-	FROM awardsmanagers
-	WHERE awardid = 'TSN Manager of the Year'
-		AND lgid = 'NL'),
-AL_wins AS (
-	SELECT yearid, playerid AS AL_winners
-	FROM awardsmanagers
-	WHERE awardid = 'TSN Manager of the Year'
-		AND lgid = 'AL')
-SELECT DISTINCT 
-	NL_winners AS winners,
-	people.namefirst,
-	people.namelast
-FROM NL_wins
-INNER JOIN AL_wins
-ON nl_winners = al_winners
-INNER JOIN people
-ON awardsmanagers.playerid = people.playerid
---INNER JOIN managers
---ON NL_wins.yearid = managers.yearid
---INNER JOIN salaries
---ON managers.yearid = salaries.yearid
-
-
-SELECT p.namefirst, p.namelast, am1.playerid AS am1_id, am1.yearid AS am1_year, am1.lgid AS am1_league, am1.awardid AS am1_award, am2.playerid AS am2_id,  am2.yearid AS am2_year, am2.lgid AS am2_league, am2.awardid AS am2_award
-FROM awardsmanagers AS am1
-JOIN awardsmanagers AS am2
-USING (playerid)
-INNER JOIN people AS p
-USING (playerid)
-INNER JOIN managers AS m
-USING (playerid)
-WHERE am1.awardid = 'TSN Manager of the Year'
-AND am2.awardid = 'TSN Manager of the Year'
-AND ((am1.lgid = 'AL' AND am2.lgid = 'NL')
-OR (am1.lgid = 'NL' AND am2.lgid = 'AL'))
-AND (m.yearid = am1.yearid)
-
+-- But this is the actual solution!
 SELECT p.namefirst, p.namelast, m.teamid AS team, am1.yearid AS am1_year, am1.lgid AS am1_league, am1.awardid AS am1_award, am2.yearid AS am2_year, am2.lgid AS am2_league, am2.awardid AS am2_award
 FROM awardsmanagers AS am1
 JOIN awardsmanagers AS am2
